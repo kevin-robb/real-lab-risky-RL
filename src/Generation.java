@@ -15,7 +15,7 @@ import java.util.Random;
  * choices and passes to AnalysisDriver.
  * 
  * @author Kevin Robb
- * @version 6/20/2018
+ * @version 6/24/2018
  * Referenced code from Steven Roberts.
  */
 public class Generation {
@@ -167,6 +167,7 @@ public class Generation {
 //everything below this is new 6/20/2018 for writing data from agents at each trial
 	/**
 	 * Creates a BufferedWriter to be used for writing specific agent/trial data to a file
+	 * Formats filenames as nurt_Gen# or nonnurt_Gen#
 	 * @return BufferedWriter output
 	 */
 	public BufferedWriter setupWriter(int currentGeneration)
@@ -175,15 +176,16 @@ public class Generation {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmssSSS");
         String outputPathName = "";
         String outputPathIdentifier = sdf.format(now.getTime());
-        outputPathName= "C:/Users/kevin/Desktop/CodeOutput/TrialOutputs/output_" + outputPathIdentifier + "_Gen" + currentGeneration + ".txt";
-
+        //outputPathName= "C:/Users/kevin/Desktop/CodeOutput/TrialOutputs/output_" + outputPathIdentifier + "_Gen" + currentGeneration + ".txt";
+        outputPathName = "C:/Users/kevin/Dropbox/REAL Lab/Graphing Code 6-24-2018/";
+        if (Setup.nurturingTrials == 0) outputPathName += "non"; //checks if non-nurturing case
+        outputPathName += "nurt_Gen" + currentGeneration + ".dat";
+        
         BufferedWriter output = null;
-        try
-        {
+        try {
             output = new BufferedWriter(new FileWriter(new File(outputPathName)));
-        }
-        catch (IOException e)
-        {
+        } 
+        catch (IOException e) {
             e.printStackTrace();
         }
         
@@ -196,18 +198,21 @@ public class Generation {
 	public void runGenerationPrint(int currentGeneration)
 	{
 		BufferedWriter output = this.setupWriter(currentGeneration);
-		try {
+		try { /*
 			output.write("each row consists of groups of data for each agent, "
 				+ "in form:\tagentNum(learningParameter):choice,fitness,[expA,expB,expC]" 
 				+ "where choice has letter chosen and reward received" + String.format("%n")
 				+ "each column consists of every trial for the same agent." + String.format("%n")
 				+ "this entire file is from Generation " + currentGeneration + String.format("%n") + String.format("%n"));
+			*/
 			//calls runTrial and runTrialPrint in a loop to run through each agent for every trial	
 			for (int trialNum = 0; trialNum < Setup.numberOfTrials; trialNum++)
 			{
 				//runs all trials. only data dump every 50th gen (this method should only be called every 50th gen)
 				runTrialPrint(trialNum, output);
 			}
+			output.flush();
+            output.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -251,13 +256,22 @@ public class Generation {
 			}
 			
 			//write data to file (temporarily only write some agents to improve readability of output)
-			if (agentNum % 5 == 0) {
+			if (agentNum % 1 == 0) { //change 1 to 5 to instead print only every 5th agent's data
+				/*
 				dataGroup = agentNum + "(" + allAgents[agentNum].getLearningParameter() + "):" + choices[agentNum][trialNum] + ","
 						+ String.format("%06.2f",allAgents[agentNum].getFitness()) + ",[" 
 						+ String.format("%06.2f", allAgents[agentNum].getExpectedRewards()[0]) 
 						+ "," + String.format("%06.2f", allAgents[agentNum].getExpectedRewards()[1])
 						+ "," + String.format("%06.2f", allAgents[agentNum].getExpectedRewards()[2]) + "]";
-				
+				*/
+				dataGroup = agentNum + " " 																		//agent number
+						+ allAgents[agentNum].getLearningParameter() + " " 										//learning parameter
+						+ choices[agentNum][trialNum].charAt(0) + " " 											//letter of choice
+						+ choices[agentNum][trialNum].substring(1, choices[agentNum][trialNum].length()) + " "	//reward received
+						+ String.format("%06.2f",allAgents[agentNum].getFitness()) + " " 						//fitness after choice
+						+ String.format("%06.2f", allAgents[agentNum].getExpectedRewards()[0]) + " " 			//expA after choice
+						+ String.format("%06.2f", allAgents[agentNum].getExpectedRewards()[1]) + " " 			//expB after choice
+						+ String.format("%06.2f", allAgents[agentNum].getExpectedRewards()[2]);					//expC	after choice
 				
 				output.write(dataGroup + "\t");
 			}

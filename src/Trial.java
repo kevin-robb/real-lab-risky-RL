@@ -4,7 +4,7 @@
  * to recalculate learning parameter value.
  * 
  * @author Kevin Robb
- * @version 6/20/2018
+ * @version 6/24/2018
  * Referenced code from Steven Roberts.
  */
 public class Trial {

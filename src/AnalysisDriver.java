@@ -16,7 +16,7 @@ import java.util.Calendar;
  * If running on different machine, change user in outputPathName
  * 
  * @author Kevin Robb
- * @version 6/20/2018
+ * @version 6/24/2018
  * Referenced code from Steven Roberts.
  */
 public class AnalysisDriver {
@@ -31,8 +31,9 @@ public class AnalysisDriver {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmssSSS");
         String outputPathName = "";
         String outputPathIdentifier = sdf.format(now.getTime());
-        outputPathName= "C:/Users/kevin/Desktop/CodeOutput/output_" + outputPathIdentifier + ".txt";
-
+        //outputPathName= "C:/Users/kevin/Desktop/CodeOutput/output_" + outputPathIdentifier + ".txt";
+        outputPathName = "C:/Users/kevin/Dropbox/REAL Lab/Graphing Code 6-24-2018/Summaries/output_" + outputPathIdentifier + ".txt";
+        
         BufferedWriter out = null;
         try
         {
