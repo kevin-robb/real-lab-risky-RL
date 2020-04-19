@@ -16,7 +16,7 @@ import java.util.Calendar;
  * If running on different machine, change user in outputPathName
  * 
  * @author Kevin Robb
- * @version 5/11/2018
+ * @version 6/9/2018
  * Referenced code from Steven Roberts.
  */
 public class AnalysisDriver {
@@ -80,10 +80,10 @@ public class AnalysisDriver {
         }
 
         //creates first generation and begin the program
-        if (Setup.graphingL)
-        	runGraphing(out);
-        else
+        if (Setup.printSummary)
         	runSummary(out);
+        else
+        	runGraphing(out);
     }
 
     /**
@@ -109,6 +109,16 @@ public class AnalysisDriver {
         double propA = -1; 
         //total of all propA in gen. used to find average propA.
         double propATotal = 0;
+        //the percent an agent's choices that were B during a time period
+        //excluding safe exploration. range 0-1
+        double propB = -1; 
+        //total of all propB in gen. used to find average propB.
+        double propBTotal = 0;
+        //the percent an agent's choices that were C during a time period
+        //excluding safe exploration. range 0-1
+        double propC = -1; 
+        //total of all propC in gen. used to find average propC.
+        double propCTotal = 0;
         //the final learningParameter value of a single agent. Correlated
         //to propA. range 0-1
         double finalLAgent = -1;
@@ -123,6 +133,10 @@ public class AnalysisDriver {
         String choiceInfo="";
         //number of times an agent chose A during a lifetime. Used for propA calculation.
         int a = 0;
+        //number of times an agent chose B during a lifetime. Used for propB calculation.
+        int b = 0;
+        //number of times an agent chose C during a lifetime. Used for propC calculation.
+        int c = 0;
         //number of trials recorded. measured this way to avoid needing
         //to perform numberOfTrials - nurturingTrials
         int numTrials = 0;
@@ -131,15 +145,16 @@ public class AnalysisDriver {
         {
             //outputs config info and format info at top of file
             out.write(Setup.parameters() + String.format("%n") + "Format: \"Gen \"currentGeneration" 
-                    + String.format("%n") + "\tpropA\tfitnessAgent\tfinalLAgent\t\texpectedA\texpectedB" + String.format("%n")
+                    + String.format("%n") + "\tpropA\tpropB\tpropC\tfitnessAgent\tfinalLAgent\t\texpectedA\texpectedB" + String.format("%n")
                     + "(previous line displays for every agent in a gen, but only every 10th gen)"
-                    + String.format("%n") + "\"Summary: \"avgPropA\tavgFitness\tavgLForGen\tminLForGen\tmaxLForGen"
+                    + String.format("%n") + "\"Summary: \"avgPropA\tavgPropB\tavgPropC\tavgFitness\tavgLForGen\tminLForGen\tmaxLForGen"
                     + String.format("%n") + String.format("%n"));
             //creates generation object. forms first gen of agents
             Generation g = new Generation();
-            //dispays actual values of each choice on next line
-            out.write("Actual Vals:\t" + Setup.stateVals[0] + "\t" + Setup.stateVals[1] + 
-                    "\t" + Setup.stateVals[2] + "\t" + Setup.stateVals[3] + String.format("%n"));
+            //displays actual values of each choice on next line
+            out.write("Actual Vals:\t" + Setup.stateVals[0] + "-" + Setup.stateVals[1] 
+            		+ "\t" + Setup.stateVals[2] + "-" + Setup.stateVals[3] 
+                    + "\t" + Setup.stateVals[4] + "-" + Setup.stateVals[5] + String.format("%n"));
             
             while (currentGeneration < Setup.numberOfGens)
             {
@@ -164,20 +179,21 @@ public class AnalysisDriver {
                     if (g.allAgents[agentNum].getLearningParameter() < minLForGen)
                         minLForGen = g.allAgents[agentNum].getLearningParameter();
 
-                    //part for calculating propA
-                    a = 0; numTrials = 0;
+                    //part for calculating propA, propB, propC
+                    a = 0; b = 0; c = 0; numTrials = 0;
                     //if trialNum < Setup.nurturingTrials, don't include in fitness calc
                     for (int trialNum = Setup.nurturingTrials; trialNum < Setup.numberOfTrials; trialNum++)
                     {
                         choiceInfo = g.choices[agentNum][trialNum];
-                        if (choiceInfo.charAt(0) == 'A')
-                            a++;
+                        if 		(choiceInfo.charAt(0) == 'A') a++;
+                        else if (choiceInfo.charAt(0) == 'B') b++;
+                        else if (choiceInfo.charAt(0) == 'C') c++;
                         numTrials++;
                     }
-                    propA = (double) a / numTrials;
+                    propA = (double) a / numTrials; propB = (double) b / numTrials; propC = (double) c / numTrials;
                     finalLAgent = g.allAgents[agentNum].getLearningParameter();
                     fitnessAgent = g.allAgents[agentNum].getFitness();
-                    propATotal += propA;
+                    propATotal += propA; propBTotal += propB; propCTotal += propC;
                     fitnessTotal += fitnessAgent;
                     LForGenTotal += finalLAgent;
                     //part for outputting specific agent data. only every 10th gen and only if config
@@ -185,15 +201,20 @@ public class AnalysisDriver {
                     {
                         //outputs all agent values at end of gen
                         out.write("\t" + String.format("%1.2f", propA) + "\t" 
+                        		+ String.format("%1.2f", propB) + "\t" 
+                        		+ String.format("%1.2f", propC) + "\t" 
                                 + String.format("%.1f", fitnessAgent) + "\t" 
                                 + String.format("%.5f", finalLAgent));
-                        //shows expected rewards for A and B
-                        out.write("\t\t" + String.format("%.5f", g.allAgents[agentNum].getExpectedRewards()[0]) 
-                        + "\t" + String.format("%.5f", g.allAgents[agentNum].getExpectedRewards()[1]));
+                        //shows expected rewards for A, B, and C
+                        out.write("\t\t" + String.format("%8.5f", g.allAgents[agentNum].getExpectedRewards()[0]) 
+                        + "\t" + String.format("%8.5f", g.allAgents[agentNum].getExpectedRewards()[1])
+                        + "\t" + String.format("%8.5f", g.allAgents[agentNum].getExpectedRewards()[2]));
                         out.write(String.format("%n"));
                     }
                 }
                 out.write("Summary: " + String.format("%.2f", propATotal/Setup.numberOfAgents) + "\t" 
+                		+ String.format("%.2f", propBTotal/Setup.numberOfAgents) + "\t" 
+                		+ String.format("%.2f", propCTotal/Setup.numberOfAgents) + "\t" 
                         + String.format("%.3f", fitnessTotal/Setup.numberOfAgents) + "\t"
                         + String.format("%.5f", LForGenTotal/Setup.numberOfAgents) + "\t" 
                         + String.format("%.5f", minLForGen) + "\t" 
@@ -248,11 +269,21 @@ public class AnalysisDriver {
         //the percent an agent's choices that were A during a time period
         //excluding safe exploration. range 0-1
         double propA = -1; 
+        //the percent an agent's choices that were B during a time period
+        //excluding safe exploration. range 0-1
+        double propB = -1; 
+        //the percent an agent's choices that were C during a time period
+        //excluding safe exploration. range 0-1
+        double propC = -1; 
         //obtained from Generation.choices array. in form "A100", meaning
         //A was chosen and a reward of 100 was received.
         String choiceInfo="";
         //number of times an agent chose A during a lifetime. Used for propA calculation.
         int a = 0;
+        //number of times an agent chose B during a lifetime. Used for propB calculation.
+        int b = 0;
+        //number of times an agent chose C during a lifetime. Used for propC calculation.
+        int c = 0;
         //number of trials recorded. measured this way to avoid needing
         //to perform numberOfTrials - nurturingTrials
         int numTrials = 0;
@@ -292,13 +323,15 @@ public class AnalysisDriver {
 	                    for (int trialNum = Setup.nurturingTrials; trialNum < Setup.numberOfTrials; trialNum++)
 	                    {
 	                        choiceInfo = g.choices[agentNum][trialNum];
-	                        if (choiceInfo.charAt(0) == 'A')
-	                            a++;
+	                        if 		(choiceInfo.charAt(0) == 'A') a++;
+	                        else if (choiceInfo.charAt(0) == 'B') b++;
+	                        else if (choiceInfo.charAt(0) == 'C') c++;
 	                        numTrials++;
 	                    }
-	                    propA = (double) a / numTrials;
-	                    
-	                    out.write(propA + "\t" + String.format("%.5f", g.allAgents[agentNum].getExpectedRewards()[1]) + String.format("%n"));
+	                    propA = (double) a / numTrials; propB = (double) b / numTrials; propB = (double) b / numTrials;
+	                    //adjust comments in next write line if desired independent var is prop besides A. 
+	                    out.write(propA + "\t" + /*propB + "\t" + propC + "\t" +*/ String.format("%.5f", g.allAgents[agentNum].getExpectedRewards()[1]) + String.format("%n"));
+	                    //output needs to have only 2 vars per line so gnuplot has 1 ind and 1 dep var to graph
                     }
                     
                     

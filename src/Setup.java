@@ -7,7 +7,7 @@ import java.util.List;
  * Extracts default values for variables from config file.
  * 
  * @author Kevin Robb
- * @version 5/11/2018
+ * @version 6/9/2018
  * Referenced code from Steven Roberts.
  */
 public class Setup {
@@ -44,13 +44,13 @@ public class Setup {
 	 */
 	static int tournamentSize = 5;
 	
-	/**denotes possible reward values of each choice. Each equal chance.
-	 * First set is choice A and second set is choice B.
-	 * */
-	static String stateInfo = "100-100,0-200";
+	/**denotes possible reward values of each choice. Each 50/50 chance.
+	 * First set is choice A, second is choice B, third is choice C.
+	 */
+	static String stateInfo = "100-100,0-220,0-180";
 	
 	/**stores min and max val for each choice in form
-	 * min A, max A, min B, max B */
+	 * min A, max A, min B, max B, min C, max C */
 	static int[] stateVals;
 	
 	/**weight used in boltzmann choice selection algorithm */
@@ -58,12 +58,13 @@ public class Setup {
 	/**any information about the trial to be included with output name. 
 	 * here, usually "nurturing" or "non-nurturing". */
 	static String runInfo = "";
+	
 	// the rest of the variables are just for setting which type of run
 	// and what data to output for graphing
 	/**specifies whether to print specific agent data. */
 	static boolean printAgentData;
 	/**specifies whether to print only L data. false will print regular summary. */
-	static boolean graphingL;
+	static boolean printSummary;
 	/**specifies whether to print fitness vs L for each agent. */
 	static boolean printFitness;
 	/**specifies whether to print data for graphing propA vs expected value of B. */
@@ -100,7 +101,7 @@ public class Setup {
 				else if (varName.equals("tournamentSize")) tournamentSize = Integer.parseInt(varValue);
 				else if (varName.equals("stateInfo")) stateInfo = varValue;
 				else if (varName.equals("printAgentData")) printAgentData = Boolean.parseBoolean(varValue);
-				else if (varName.equals("graphingL")) graphingL = Boolean.parseBoolean(varValue);
+				else if (varName.equals("printSummary")) printSummary = Boolean.parseBoolean(varValue);
 				else if (varName.equals("printFitness")) printFitness = Boolean.parseBoolean(varValue);
 				else if (varName.equals("printPropAvsExpB")) printPropAvsExpB = Boolean.parseBoolean(varValue);
 				else System.out.println("Parameter " + varName + " is not valid.");
@@ -125,7 +126,7 @@ public class Setup {
 				else if (varName.equals("tournamentSize")) tournamentSize = Integer.parseInt(varValue);
 				else if (varName.equals("stateInfo")) stateInfo = varValue;
                 else if (varName.equals("printAgentData")) printAgentData = Boolean.parseBoolean(varValue);
-                else if (varName.equals("graphingL")) graphingL = Boolean.parseBoolean(varValue);
+                else if (varName.equals("printSummary")) printSummary = Boolean.parseBoolean(varValue);
 				else if (varName.equals("printFitness")) printFitness = Boolean.parseBoolean(varValue);
 				else if (varName.equals("printPropAvsExpB")) printPropAvsExpB = Boolean.parseBoolean(varValue);
 				else System.out.println("Parameter " + varName + " is not valid.");
@@ -140,14 +141,17 @@ public class Setup {
 	{
 		//stateInfo in form "100-100,0-200" with first set for A and second for B
 		String stateA = stateInfo.substring(0, stateInfo.indexOf(","));
-		String stateB = stateInfo.substring(stateInfo.indexOf(",") + 1, stateInfo.length());
+		String stateB = stateInfo.substring(stateInfo.indexOf(",") + 1, stateInfo.lastIndexOf(","));
+		String stateC = stateInfo.substring(stateInfo.lastIndexOf(",") + 1, stateInfo.length());
 		//initialize stateVals array
-		stateVals = new int[4];
-		//stores min and max for both choices
+		stateVals = new int[6];
+		//stores min and max for all choices
 		Setup.stateVals[0] = Integer.parseInt(stateA.substring(0, stateA.indexOf("-"))); //A min
 		Setup.stateVals[1] = Integer.parseInt(stateA.substring(stateA.indexOf("-") + 1, stateA.length())); //A max
 		Setup.stateVals[2] = Integer.parseInt(stateB.substring(0, stateB.indexOf("-"))); //B min
 		Setup.stateVals[3] = Integer.parseInt(stateB.substring(stateB.indexOf("-") + 1, stateB.length())); //B max
+		Setup.stateVals[4] = Integer.parseInt(stateC.substring(0, stateC.indexOf("-"))); //C min
+		Setup.stateVals[5] = Integer.parseInt(stateC.substring(stateC.indexOf("-") + 1, stateC.length())); //C max
 	}
 	
 	/**

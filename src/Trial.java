@@ -4,7 +4,7 @@
  * to recalculate learning parameter value.
  * 
  * @author Kevin Robb
- * @version 5/11/2018
+ * @version 6/9/2018
  * Referenced code from Steven Roberts.
  */
 public class Trial {
@@ -45,20 +45,21 @@ public class Trial {
 		
 		//random reward selection based on choice
 		int reward = 0;
-		char choiceLetter = 'B';
+		char choiceLetter = 'Z';
 		if (choice == 0) {choiceLetter = 'A'; }
-		else if (choice != 1)
-		{
-		    System.exit(1);
-		}
-		//should never happen but if choice != 0 or 1, it will select option B
+		else if (choice == 1) {choiceLetter = 'B'; }
+		else if (choice == 2) {choiceLetter = 'C'; }
+		else {System.exit(1); }
+		//should never happen but if choice != 0, 1, or 2, it will show option 'Z' in data output
 		
 		int rewardPick = (int) Math.round(Math.random());
 		if (choiceLetter == 'A')
 		{
 			reward = Setup.stateVals[rewardPick];
-		} else {
+		} else if (choiceLetter == 'B') {
 			reward = Setup.stateVals[rewardPick + 2];
+		} else { //assume option C
+			reward = Setup.stateVals[rewardPick + 4];
 		}
 		
 		return "" + choiceLetter + reward;

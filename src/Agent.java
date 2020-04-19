@@ -2,7 +2,7 @@
  * Stores information about one Agent.
  * 
  * @author Kevin Robb
- * @version 5/11/2018
+ * @version 6/9/2018
  * Referenced code from Steven Roberts.
  */
 public class Agent {
@@ -21,15 +21,17 @@ public class Agent {
 	{
 		//sets to default starting L value
 		this.learningParameter = Setup.learningParameter;
-		this.expectedRewards = new double[2];
+		this.expectedRewards = new double[3];
 		this.fitness = 0;
 		//sets expected rewards to simple average reward for each option
 		expectedRewards[0] = (Setup.stateVals[0] + Setup.stateVals[1]) / 2;
 		expectedRewards[1] = (Setup.stateVals[2] + Setup.stateVals[3]) / 2;
+		expectedRewards[2] = (Setup.stateVals[4] + Setup.stateVals[5]) / 2;
 		
-		//TODO temp testing
+		//Sets all exp values to 100 rather than actual. remove next 3 lines if actual desired
         expectedRewards[0] = (Setup.stateVals[0] + Setup.stateVals[1]) / 2;
         expectedRewards[1] = (Setup.stateVals[0] + Setup.stateVals[1]) / 2;
+        expectedRewards[2] = (Setup.stateVals[0] + Setup.stateVals[1]) / 2;
 	}
 	/**
 	 * Constructor to be used when creating agents for new generations.
@@ -38,15 +40,17 @@ public class Agent {
 	public Agent(double learningParameter)
 	{ 
 		this.learningParameter = learningParameter;
-		this.expectedRewards = new double[2];
+		this.expectedRewards = new double[3];
 		this.fitness = 0;
         //sets expected rewards to simple average reward for each option
 		expectedRewards[0] = (Setup.stateVals[0] + Setup.stateVals[1]) / 2;
 		expectedRewards[1] = (Setup.stateVals[2] + Setup.stateVals[3]) / 2;
+		expectedRewards[2] = (Setup.stateVals[4] + Setup.stateVals[5]) / 2;
 		
-		//TODO temp testing
-		expectedRewards[0] = (Setup.stateVals[0] + Setup.stateVals[1]) / 2;
+		//Sets all exp values to 100 rather than actual. remove next 3 lines if actual desired
+        expectedRewards[0] = (Setup.stateVals[0] + Setup.stateVals[1]) / 2;
         expectedRewards[1] = (Setup.stateVals[0] + Setup.stateVals[1]) / 2;
+        expectedRewards[2] = (Setup.stateVals[0] + Setup.stateVals[1]) / 2;
 		
 		//if we want, agents could carry over expected values between generations
 		//this would work by copying agents and modifying only L (in Generation.formNewGeneration)

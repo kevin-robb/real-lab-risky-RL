@@ -8,7 +8,7 @@ import java.util.Random;
  * choices and passes to AnalysisDriver.
  * 
  * @author Kevin Robb
- * @version 5/11/2018
+ * @version 6/9/2018
  * Referenced code from Steven Roberts.
  */
 public class Generation {
@@ -59,7 +59,7 @@ public class Generation {
 			//gets reward value from choice
 			newFitness = Integer.parseInt(
 					choices[agentNum][trialNum].substring(1, choices[agentNum][trialNum].length()));
-			//if A selected, sets to 0. if B selected, sets to 1.
+			//if A selected, sets to 0. if B selected, sets to 1. if C selected, sets to 2
 			selectedCell = choices[agentNum][trialNum].charAt(0) - 65;
 			//update expected rewards for option chosen
 			currentExpectedVal = allAgents[agentNum].getExpectedRewards()[selectedCell];
