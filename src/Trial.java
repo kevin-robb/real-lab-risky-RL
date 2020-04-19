@@ -4,7 +4,7 @@
  * to recalculate learning parameter value.
  * 
  * @author Kevin Robb
- * @version 6/15/2018
+ * @version 6/20/2018
  * Referenced code from Steven Roberts.
  */
 public class Trial {
@@ -61,7 +61,7 @@ public class Trial {
 		} else { //assume option C
 			reward = Setup.stateVals[rewardPick + 4];
 		}
-		
-		return "" + choiceLetter + reward;
+		//format all choice strings to 4 characters long
+		return "" + choiceLetter + String.format("%03d",reward);
 	}
 }

@@ -7,7 +7,7 @@ import java.util.List;
  * Extracts default values for variables from config file.
  * 
  * @author Kevin Robb
- * @version 6/15/2018
+ * @version 6/20/2018
  * Referenced code from Steven Roberts.
  */
 public class Setup {
@@ -69,6 +69,8 @@ public class Setup {
 	static boolean printFitness;
 	/**specifies whether to print data for graphing propA vs expected value of B. */
 	static boolean printPropAvsExpB;
+	/**specifies whether to data dump into separate file from Generation class during simulation. */
+	static boolean printAgentTrialData;
 	
 	/**
 	 * sets environment parameters and variables from config file.
@@ -104,6 +106,7 @@ public class Setup {
 				else if (varName.equals("printSummary")) printSummary = Boolean.parseBoolean(varValue);
 				else if (varName.equals("printFitness")) printFitness = Boolean.parseBoolean(varValue);
 				else if (varName.equals("printPropAvsExpB")) printPropAvsExpB = Boolean.parseBoolean(varValue);
+				else if (varName.equals("printAgentTrialData")) printAgentTrialData = Boolean.parseBoolean(varValue);
 				else System.out.println("Parameter " + varName + " is not valid.");
 			}
 		}
@@ -128,7 +131,7 @@ public class Setup {
                 else if (varName.equals("printAgentData")) printAgentData = Boolean.parseBoolean(varValue);
                 else if (varName.equals("printSummary")) printSummary = Boolean.parseBoolean(varValue);
 				else if (varName.equals("printFitness")) printFitness = Boolean.parseBoolean(varValue);
-				else if (varName.equals("printPropAvsExpB")) printPropAvsExpB = Boolean.parseBoolean(varValue);
+				else if (varName.equals("printAgentTrialData")) printAgentTrialData = Boolean.parseBoolean(varValue);
 				else System.out.println("Parameter " + varName + " is not valid.");
 			}
 		}

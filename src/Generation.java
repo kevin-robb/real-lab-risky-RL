@@ -1,3 +1,10 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Random;
 
 /**
@@ -8,7 +15,7 @@ import java.util.Random;
  * choices and passes to AnalysisDriver.
  * 
  * @author Kevin Robb
- * @version 6/15/2018
+ * @version 6/20/2018
  * Referenced code from Steven Roberts.
  */
 public class Generation {
@@ -75,7 +82,7 @@ public class Generation {
 	}
 	
 	/**
-	 * Run all trials for the current generation. 
+	 * Runs all trials for the current generation. 
 	 */
 	public void runGeneration()
 	{
@@ -156,6 +163,107 @@ public class Generation {
 		//clears choices array back to default blank values. not necessary but prevents error masking
 		this.choices = new String[Setup.numberOfAgents][Setup.numberOfTrials];
 	}
+//****************************************************************************************************************************************************************************************************
+//everything below this is new 6/20/2018 for writing data from agents at each trial
+	/**
+	 * Creates a BufferedWriter to be used for writing specific agent/trial data to a file
+	 * @return BufferedWriter output
+	 */
+	public BufferedWriter setupWriter(int currentGeneration)
+	{
+		Calendar now = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmssSSS");
+        String outputPathName = "";
+        String outputPathIdentifier = sdf.format(now.getTime());
+        outputPathName= "C:/Users/kevin/Desktop/CodeOutput/TrialOutputs/output_" + outputPathIdentifier + "_Gen" + currentGeneration + ".txt";
+
+        BufferedWriter output = null;
+        try
+        {
+            output = new BufferedWriter(new FileWriter(new File(outputPathName)));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        
+        return output;
+	}
 	
+	/**
+	 * Runs all trials for the current generation and writes data to a new file. 
+	 */
+	public void runGenerationPrint(int currentGeneration)
+	{
+		BufferedWriter output = this.setupWriter(currentGeneration);
+		try {
+			output.write("each row consists of groups of data for each agent, "
+				+ "in form:\tagentNum(learningParameter):choice,fitness,[expA,expB,expC]" 
+				+ "where choice has letter chosen and reward received" + String.format("%n")
+				+ "each column consists of every trial for the same agent." + String.format("%n")
+				+ "this entire file is from Generation " + currentGeneration + String.format("%n") + String.format("%n"));
+			//calls runTrial and runTrialPrint in a loop to run through each agent for every trial	
+			for (int trialNum = 0; trialNum < Setup.numberOfTrials; trialNum++)
+			{
+				//runs all trials. only data dump every 50th gen (this method should only be called every 50th gen)
+				runTrialPrint(trialNum, output);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
+	/**
+	 * Iterate through all agents and perform choice for one trial.
+	 * Store choice and result in choices array.
+	 * Trial class will update agent's learning param, expected reward for each option,
+	 * and aggregate fitness as choices are made.
+	 * 
+	 * Same as normal runTrial, but writes data after choices have been made for all agents.
+	 * @param trialNum which trial in the generation this is.
+	 */
+	public void runTrialPrint(int trialNum, BufferedWriter output) throws IOException
+	{
+		double L = -1;
+		double currentExpectedVal = -1;
+		double newFitness = 0;
+		int selectedCell = -1;
+		String dataGroup = "";
+		for(int agentNum = 0; agentNum < Setup.numberOfAgents; agentNum++)
+		{
+			//makes choice for every agent and gets reward
+			choices[agentNum][trialNum] = Trial.makeChoice(allAgents[agentNum]);
+			L = allAgents[agentNum].getLearningParameter();
+			//gets reward value from choice
+			newFitness = Integer.parseInt(
+					choices[agentNum][trialNum].substring(1, choices[agentNum][trialNum].length()));
+			//if A selected, sets to 0. if B selected, sets to 1. if C selected, sets to 2
+			selectedCell = choices[agentNum][trialNum].charAt(0) - 65;
+			//update expected rewards for option chosen
+			currentExpectedVal = allAgents[agentNum].getExpectedRewards()[selectedCell];
+			allAgents[agentNum].setExpectedRewards(selectedCell, (1 - L) * currentExpectedVal + L * newFitness);
+			
+			//updates aggregate fitness
+			if (trialNum >= Setup.nurturingTrials)
+			{
+				//accounts for nurturing case and adds fitness to aggregate total
+				allAgents[agentNum].addFitness(newFitness / (Setup.numberOfTrials - Setup.nurturingTrials));
+			}
+			
+			//write data to file (temporarily only write some agents to improve readability of output)
+			if (agentNum % 5 == 0) {
+				dataGroup = agentNum + "(" + allAgents[agentNum].getLearningParameter() + "):" + choices[agentNum][trialNum] + ","
+						+ String.format("%06.2f",allAgents[agentNum].getFitness()) + ",[" 
+						+ String.format("%06.2f", allAgents[agentNum].getExpectedRewards()[0]) 
+						+ "," + String.format("%06.2f", allAgents[agentNum].getExpectedRewards()[1])
+						+ "," + String.format("%06.2f", allAgents[agentNum].getExpectedRewards()[2]) + "]";
+				
+				
+				output.write(dataGroup + "\t");
+			}
+		}
+		//carriage return after each trial
+		output.write(String.format("%n"));
+	}
+
 }

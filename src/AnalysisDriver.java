@@ -16,7 +16,7 @@ import java.util.Calendar;
  * If running on different machine, change user in outputPathName
  * 
  * @author Kevin Robb
- * @version 6/15/2018
+ * @version 6/20/2018
  * Referenced code from Steven Roberts.
  */
 public class AnalysisDriver {
@@ -160,7 +160,11 @@ public class AnalysisDriver {
             
             while (currentGeneration < Setup.numberOfGens)
             {
-                g.runGeneration();
+            	//check if we are running a data dump sim or a standard summary sim.
+            	//only data dump every 50th gen. run normal otherwise
+            	if (Setup.printAgentTrialData && currentGeneration % 50 == 0) g.runGenerationPrint(currentGeneration);
+            	else g.runGeneration();
+            	
                 //reset values for new gen
                 minLForGen = Integer.MAX_VALUE;
                 maxLForGen = Integer.MIN_VALUE;
@@ -336,7 +340,11 @@ public class AnalysisDriver {
             
             while (currentGeneration < Setup.numberOfGens)
             {
-                g.runGeneration();
+            	//check if we are running a data dump sim or a standard graphing sim.
+            	//only data dump every 50th gen, runs normal otherwise
+            	if (Setup.printAgentTrialData && currentGeneration % 50 == 0) g.runGenerationPrint(currentGeneration);
+            	else g.runGeneration();
+            	
                 //reset values for new gen
                 //minLForGen = Integer.MAX_VALUE;
                 //maxLForGen = Integer.MIN_VALUE;
@@ -359,8 +367,8 @@ public class AnalysisDriver {
                     if (Setup.printPropAvsExpB && !Setup.printFitness && !Setup.printAgentData && currentGeneration % 50 == 0) {
                     	//writes propA (x) and expected val of B (y)
                     	
-                    	//part for calculating propA
-	                    a = 0; numTrials = 0;
+                    	//part for calculating propA, propB, and propC
+	                    a = 0; b = 0; c = 0; numTrials = 0;
 	                    //if trialNum < Setup.nurturingTrials, don't include in fitness calc
 	                    for (int trialNum = Setup.nurturingTrials; trialNum < Setup.numberOfTrials; trialNum++)
 	                    {
@@ -370,9 +378,10 @@ public class AnalysisDriver {
 	                        else if (choiceInfo.charAt(0) == 'C') c++;
 	                        numTrials++;
 	                    }
-	                    propA = (double) a / numTrials; propB = (double) b / numTrials; propB = (double) b / numTrials;
+	                    propA = (double) a / numTrials; propB = (double) b / numTrials; propC = (double) c / numTrials;
 	                    //adjust comments in next write line if desired independent var is prop besides A. 
-	                    out.write(propA + "\t" + /*propB + "\t" + propC + "\t" +*/ String.format("%.5f", g.allAgents[agentNum].getExpectedRewards()[1]) + String.format("%n"));
+	                    out.write(propA /*+ "\t" + propB + "\t" + propC */ + "\t" 
+	                    		+ String.format("%.5f", g.allAgents[agentNum].getExpectedRewards()[1]) + String.format("%n"));
 	                    //output needs to have only 2 vars per line so gnuplot has 1 ind and 1 dep var to graph
                     }
                     
@@ -380,7 +389,7 @@ public class AnalysisDriver {
                     if (!Setup.printPropAvsExpB && Setup.printFitness && currentGeneration % 50 == 0) { 
                     	//writes L (x) and fitness (y) of every individual, every 50 gens
                     	out.write(String.format("%.5f", g.allAgents[agentNum].getLearningParameter()) + "\t" 
-                    	+ String.format("%.3f", g.allAgents[agentNum].getFitness()) + String.format("%n"));
+                    			+ String.format("%.3f", g.allAgents[agentNum].getFitness()) + String.format("%n"));
                     }
                 }
                 if (Setup.printAgentData && !Setup.printPropAvsExpB && !Setup.printFitness)
@@ -397,12 +406,12 @@ public class AnalysisDriver {
                 			+ String.format("%.5f", LForGenTotal/Setup.numberOfAgents) + "\t" 
                 			+ String.format("%.5f", LthirdQ) + "\t" 
                             + String.format("%.5f", maxLForGen) + String.format("%n"));
-                } else if(!Setup.printPropAvsExpB && !Setup.printFitness) { 
+                } else if (!Setup.printPropAvsExpB && !Setup.printFitness) { //all 4 config vars are false
                 	//use generation as x and avgLForGen as y
                 	out.write(currentGeneration + "\t" + String.format("%.5f", LForGenTotal/Setup.numberOfAgents)
-                	+ String.format("%n"));
+                		+ String.format("%n"));
                 } else if ((Setup.printPropAvsExpB || Setup.printFitness) && currentGeneration % 50 == 0) { 
-                	//must be printing L(x) and fitness (y) or propA (x) and expB (y),
+                	//must be printing L(x) vs fitness (y) or propA (x) vs expB (y),
                 	// so insert blank line between sets of agents
                 	out.write(String.format("%n"));
                 }
