@@ -2,7 +2,7 @@
  * Stores information about one Agent.
  * 
  * @author Kevin Robb
- * @version 6/9/2018
+ * @version 6/15/2018
  * Referenced code from Steven Roberts.
  */
 public class Agent {

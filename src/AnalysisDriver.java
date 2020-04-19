@@ -16,7 +16,7 @@ import java.util.Calendar;
  * If running on different machine, change user in outputPathName
  * 
  * @author Kevin Robb
- * @version 6/9/2018
+ * @version 6/15/2018
  * Referenced code from Steven Roberts.
  */
 public class AnalysisDriver {
@@ -140,6 +140,8 @@ public class AnalysisDriver {
         //number of trials recorded. measured this way to avoid needing
         //to perform numberOfTrials - nurturingTrials
         int numTrials = 0;
+        //variables to be used calculating stats about expected values for each option
+        double minExpA, maxExpA, totExpA, minExpB, maxExpB, totExpB, minExpC, maxExpC, totExpC;
 
         try
         {
@@ -163,9 +165,11 @@ public class AnalysisDriver {
                 minLForGen = Integer.MAX_VALUE;
                 maxLForGen = Integer.MIN_VALUE;
                 LForGenTotal = 0;
-                propATotal = 0;
+                propATotal = 0; propBTotal = 0; propCTotal = 0;
                 fitnessTotal = 0;
-                
+                minExpA=1000;minExpB=1000;minExpC=1000;
+                maxExpA=0;maxExpB=0;maxExpC=0;
+                totExpA=0;totExpB=0;totExpC=0;
                 //export data then clear it for next gen
                 //calculate number of times each chosen, and final learning param of each agent
 
@@ -211,14 +215,52 @@ public class AnalysisDriver {
                         + "\t" + String.format("%8.5f", g.allAgents[agentNum].getExpectedRewards()[2]));
                         out.write(String.format("%n"));
                     }
+                    //part for calculating summary stats for min/max/avg of all agents' expected vals in one gen
+                    //find new mins
+                    if (g.allAgents[agentNum].getExpectedRewards()[0] < minExpA)
+                        minExpA = g.allAgents[agentNum].getExpectedRewards()[0];
+                    if (g.allAgents[agentNum].getExpectedRewards()[1] < minExpB)
+                        minExpB = g.allAgents[agentNum].getExpectedRewards()[1];
+                    if (g.allAgents[agentNum].getExpectedRewards()[2] < minExpC)
+                        minExpC = g.allAgents[agentNum].getExpectedRewards()[2];
+                    //find new maxs
+                    if (g.allAgents[agentNum].getExpectedRewards()[0] > maxExpA)
+                        maxExpA = g.allAgents[agentNum].getExpectedRewards()[0];
+                    if (g.allAgents[agentNum].getExpectedRewards()[1] > maxExpB)
+                        maxExpB = g.allAgents[agentNum].getExpectedRewards()[1];
+                    if (g.allAgents[agentNum].getExpectedRewards()[2] > maxExpC)
+                        maxExpC = g.allAgents[agentNum].getExpectedRewards()[2];
+                    //find totals for avg
+                    totExpA += g.allAgents[agentNum].getExpectedRewards()[0];
+                    totExpB += g.allAgents[agentNum].getExpectedRewards()[1];
+                    totExpC += g.allAgents[agentNum].getExpectedRewards()[2];
+                    
+                    
                 }
+                //info written to gen summary lines, also for gens with agent data printed
                 out.write("Summary: " + String.format("%.2f", propATotal/Setup.numberOfAgents) + "\t" 
                 		+ String.format("%.2f", propBTotal/Setup.numberOfAgents) + "\t" 
                 		+ String.format("%.2f", propCTotal/Setup.numberOfAgents) + "\t" 
                         + String.format("%.3f", fitnessTotal/Setup.numberOfAgents) + "\t"
                         + String.format("%.5f", LForGenTotal/Setup.numberOfAgents) + "\t" 
-                        + String.format("%.5f", minLForGen) + "\t" 
-                        + String.format("%.5f", maxLForGen) + String.format("%n"));
+                        + String.format("%.5f", minLForGen) + "\t"
+                        + String.format("%.5f", maxLForGen) 
+                        //stats for expected A
+                        + String.format("%n")
+                        + String.format("A:\t%8.5f", minExpA) + "\t" 
+                        + String.format("%8.5f", totExpA/Setup.numberOfAgents) + "\t" 
+                        + String.format("%8.5f", maxExpA)
+                        //stats for expected B
+                        + String.format("%n")
+                        + String.format("B:\t%8.5f", minExpB) + "\t" 
+                        + String.format("%8.5f", totExpB/Setup.numberOfAgents) + "\t" 
+                        + String.format("%8.5f", maxExpB)
+                        //stats for expected C
+                        + String.format("%n")
+                        + String.format("C:\t%8.5f", minExpC) + "\t" 
+                        + String.format("%8.5f", totExpC/Setup.numberOfAgents) + "\t" 
+                        + String.format("%8.5f", maxExpC)
+                        + String.format("%n"));
 
                 //don't form new gen if currently last gen
                 if (currentGeneration != Setup.numberOfGens - 1)
