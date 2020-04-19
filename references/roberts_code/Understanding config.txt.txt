@@ -1,0 +1,66 @@
+The possible lines in config.txt and their explanations:
+
+selfWeight=<number between 0 and 1, inclusive>
+	The amount of weight each agent in the simulation gives to its own experienve vs others. A selfWeight of 0 means full knowledge sharing, where the actions taken by each agent affect all agents equally (full knowledge sharing). A selfWeight of 1 means each agent only takes its own experiences into account (no knowledge sharing). NOTE: I have only used values of 0 and 1 for my project. While I am confident that other values work as well, I have not verified these.
+
+timeWeight=<number between 0 and 1, inclusive>
+	The amount of weight given to newly obtained information when updating learned behavior. A timeWeight of 0 means only old information is used (no learning). A timeWeight of 1 means only new information is used (no memory). A timeWeight=.1 is pretty standard and was held constant for my project.
+
+resourceShare=<number between 0 and 1, inclusive>
+	The proportion of resource income/cost each agent will share with the general population. A resourceShare of 0 means all incoming resources are kept by each agent and all costs are payed fully by each agent (no resource sharing). A resourceShare of 1 means all incoming resources are shared with the general population and all costs come from the "budget" of the general population (full resource sharing). A resourceShare of .2 means 20% of all incoming resources are kept by each agent and the other 80% are shared with the general population. Costs are payed up to 80% from the general population (as much as it can afford) and the rest by the agent.
+
+numberOfAgents=<positive integer>
+	The number of agents initially present in each population.
+
+numberOfTrials=<positive integer>
+	The length of the simulation.
+
+costOfLiving=<real number>
+	The amount of resources required by each agent at the end of each trial. A negative number indicates that the agent gains resources. NOTE: I do not think negative numbers would behave nicely with the way shared costs are currently calculated.
+
+stateActionSpace=<really fun thing>
+	This contains the json-like data describing the state-action space of the simulation environment. Consider the example:
+	Expanding {{{100}:0,{0,240}:0}} gives:
+	
+	{ // level 1 contains states
+		{ // level 2 contains actions
+			{ // level 3 contains rewards
+				100
+			}:0, // <-- go to state 0
+			{
+				0,
+				240
+			}:0
+		}
+	}
+	
+	This S-A space contains one state (index 0) with two possible actions. The first action has one possible reward of 100 units of resource. The second action has two possible rewards of 0 and 240 units of resource. After each action is a ":0", designating that the agent goes to state 0 after choosing that action.
+	
+	As an exercise to the reader, here is another example:
+	{{{100}:1,{0,200}:2},{{0,150}:2},{{100}:0,{125}:1}}
+	Expanded:
+	{
+		{
+			{
+				100
+			}:1,
+			{
+				0,
+				200
+			}:2
+		},
+		{
+			{
+				0,
+				150
+			}:2
+		},
+		{
+			{
+				100
+			}:0,
+			{
+				125
+			}:1
+		}
+	}
