@@ -1,0 +1,12 @@
+learningParameter=.5
+mutationStdDev=0.05
+numberOfAgents=50
+numberOfTrials=100
+nurturingTrials=0
+numberOfGens=200
+tournamentSize=2
+stateInfo=100-100,0-220
+graphingL=true
+printAgentData=true
+printFitness=false
+printPropAvsExpB=false
