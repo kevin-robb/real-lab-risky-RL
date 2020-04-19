@@ -16,7 +16,7 @@ import java.util.Calendar;
  * If running on different machine, change user in outputPathName
  * 
  * @author Kevin Robb
- * @version 6/24/2018
+ * @version 6/30/2018
  * Referenced code from Steven Roberts.
  */
 public class AnalysisDriver {
@@ -32,7 +32,11 @@ public class AnalysisDriver {
         String outputPathName = "";
         String outputPathIdentifier = sdf.format(now.getTime());
         //outputPathName= "C:/Users/kevin/Desktop/CodeOutput/output_" + outputPathIdentifier + ".txt";
-        outputPathName = "C:/Users/kevin/Dropbox/REAL Lab/Graphing Code 6-24-2018/Summaries/output_" + outputPathIdentifier + ".txt";
+        outputPathName = "C:/Users/kevin/Dropbox/REAL Lab/Kevin Graphing Data 6-30-2018/Summaries";
+        //outputPathName += "output_" + outputPathIdentifier + ".txt";
+        //temp alternate output for gathering data with only one nurt and one nonnurt run
+        if (Setup.nurturingTrials == 0) outputPathName += "non"; //checks if non-nurturing case
+        outputPathName += "nurt_summary" + ".dat";
         
         BufferedWriter out = null;
         try
@@ -163,7 +167,8 @@ public class AnalysisDriver {
             {
             	//check if we are running a data dump sim or a standard summary sim.
             	//only data dump every 50th gen. run normal otherwise
-            	if (Setup.printAgentTrialData && currentGeneration % 50 == 0) g.runGenerationPrint(currentGeneration);
+            	//temp: data dump every 5th gen for first 50 gens
+            	if (Setup.printAgentTrialData && (currentGeneration % 50 == 0 || (currentGeneration < 50 && currentGeneration % 5 == 0))) g.runGenerationPrint(currentGeneration);
             	else g.runGeneration();
             	
                 //reset values for new gen
@@ -342,8 +347,9 @@ public class AnalysisDriver {
             while (currentGeneration < Setup.numberOfGens)
             {
             	//check if we are running a data dump sim or a standard graphing sim.
-            	//only data dump every 50th gen, runs normal otherwise
-            	if (Setup.printAgentTrialData && currentGeneration % 50 == 0) g.runGenerationPrint(currentGeneration);
+            	//only data dump every 50th gen. run normal otherwise
+            	//temp: data dump every 5th gen for first 50 gens
+            	if (Setup.printAgentTrialData && (currentGeneration % 50 == 0 || (currentGeneration < 50 && currentGeneration % 5 == 0))) g.runGenerationPrint(currentGeneration);
             	else g.runGeneration();
             	
                 //reset values for new gen

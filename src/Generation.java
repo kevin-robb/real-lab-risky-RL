@@ -15,7 +15,7 @@ import java.util.Random;
  * choices and passes to AnalysisDriver.
  * 
  * @author Kevin Robb
- * @version 6/24/2018
+ * @version 6/30/2018
  * Referenced code from Steven Roberts.
  */
 public class Generation {
@@ -177,7 +177,7 @@ public class Generation {
         String outputPathName = "";
         String outputPathIdentifier = sdf.format(now.getTime());
         //outputPathName= "C:/Users/kevin/Desktop/CodeOutput/TrialOutputs/output_" + outputPathIdentifier + "_Gen" + currentGeneration + ".txt";
-        outputPathName = "C:/Users/kevin/Dropbox/REAL Lab/Graphing Code 6-24-2018/";
+        outputPathName = "C:/Users/kevin/Dropbox/REAL Lab/Kevin Graphing Data 6-30-2018/";
         if (Setup.nurturingTrials == 0) outputPathName += "non"; //checks if non-nurturing case
         outputPathName += "nurt_Gen" + currentGeneration + ".dat";
         

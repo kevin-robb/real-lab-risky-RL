@@ -7,7 +7,7 @@ import java.util.List;
  * Extracts default values for variables from config file.
  * 
  * @author Kevin Robb
- * @version 6/24/2018
+ * @version 6/30/2018
  * Referenced code from Steven Roberts.
  */
 public class Setup {
