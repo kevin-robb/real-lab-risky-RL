@@ -16,7 +16,7 @@ import java.util.Calendar;
  * If running on different machine, change user in outputPathName
  * 
  * @author Kevin Robb
- * @version 6/30/2018
+ * @version 7/14/2018
  * Referenced code from Steven Roberts.
  */
 public class AnalysisDriver {
@@ -32,10 +32,12 @@ public class AnalysisDriver {
         String outputPathName = "";
         String outputPathIdentifier = sdf.format(now.getTime());
         //outputPathName= "C:/Users/kevin/Desktop/CodeOutput/output_" + outputPathIdentifier + ".txt";
-        outputPathName = "C:/Users/kevin/Dropbox/REAL Lab/Kevin Graphing Data 6-30-2018/Summaries";
+        outputPathName = "C:/Users/kevin/Dropbox/REAL Lab/Kevin Graphing Data 7-14-2018/";
         //outputPathName += "output_" + outputPathIdentifier + ".txt";
         //temp alternate output for gathering data with only one nurt and one nonnurt run
-        if (Setup.nurturingTrials == 0) outputPathName += "non"; //checks if non-nurturing case
+        //if (Setup.nurturingTrials == 0) outputPathName += "non"; //checks if non-nurturing case //DOESNT WORK B/C CONFIG NOT READ IN YET
+        
+        //outputPathName += "non"; //comment this line out when running the nurt case
         outputPathName += "nurt_summary" + ".dat";
         
         BufferedWriter out = null;

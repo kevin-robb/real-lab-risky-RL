@@ -1,11 +1,11 @@
 learningParameter=.5
 mutationStdDev=0.05
 numberOfAgents=50
-numberOfTrials=200
-nurturingTrials=0
+numberOfTrials=500
+nurturingTrials=150
 numberOfGens=500
 tournamentSize=2
-stateInfo=100-100,50-200,0-150
+stateInfo=100-100,0-220,0-150
 printSummary=false
 printAgentData=false
 printFitness=false

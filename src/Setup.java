@@ -7,7 +7,7 @@ import java.util.List;
  * Extracts default values for variables from config file.
  * 
  * @author Kevin Robb
- * @version 6/30/2018
+ * @version 7/14/2018
  * Referenced code from Steven Roberts.
  */
 public class Setup {
@@ -22,8 +22,8 @@ public class Setup {
 	 */
 	static double learningParameter = .5;
 	/**the standard deviation of the mutation value used in
-	 * new generation formation */
-	static double mutationStdDev = 0.1;
+	 * new generation formation. mean is 0. */
+	static double mutationStdDev = 0.05;
 	/**the number of individuals in each generation*/
 	static int numberOfAgents = 30;
 	/**the number of trials per lifetime*/
